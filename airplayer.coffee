@@ -39,7 +39,6 @@ module.exports = class Airplayer
       if req.method == "HEAD"
         res.end()
       if req.method == "GET"
-        res.writeHeader(200, {'Content-Type': 'video/h264'})
         readstream = fs.createReadStream(filepath)
         readstream.on 'data', (chunk) -> res.write chunk
         readstream.on 'close', -> res.end()
