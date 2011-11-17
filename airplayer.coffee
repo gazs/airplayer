@@ -1,7 +1,10 @@
 #! /usr/bin/env coffee
+
 http = require 'http'
 fs = require 'fs'
 os = require 'os'
+servefile = require './servefile'
+
 
 module.exports = class Airplayer
   constructor: (@host, @port) ->
@@ -34,16 +37,8 @@ module.exports = class Airplayer
   playurl: (url, start_position=0, cb) -> @post('play', @playmsg(url, start_position), cb)
 
   serve_file: (port, filepath) ->
-    http.createServer( (req, res) ->
-      res.writeHeader(200, {'Content-Type': 'video/h264'})
-      if req.method == "HEAD"
-        res.end()
-      if req.method == "GET"
-        readstream = fs.createReadStream(filepath)
-        readstream.on 'data', (chunk) -> res.write chunk
-        readstream.on 'close', -> res.end()
-        req.on 'end', => @close()
-    ).listen(port)
+    servefile(filepath).listen(port)
+
 
   playfile: (filepath, start_position=0, cb) ->
     port = 8000
